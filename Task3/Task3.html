@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tic-Tac-Toe</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        text-align: center;
+      }
+
+      #board {
+        display: grid;
+        grid-template-columns: repeat(3, 100px);
+        gap: 5px;
+        margin: 20px auto;
+      }
+
+      .cell {
+        width: 100px;
+        height: 100px;
+        font-size: 24px;
+        cursor: pointer;
+        border: 1px solid #ccc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .cell.winner {
+        color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Tic-Tac-Toe</h1>
+    <div id="board"></div>
+    <button id="reset">Reset</button>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const board = document.getElementById("board");
+        const resetButton = document.getElementById("reset");
+        const cells = [];
+        let currentPlayer = "X";
+        let winner = null;
+
+        // Create the tic-tac-toe board
+        for (let i = 0; i < 9; i++) {
+          const cell = document.createElement("div");
+          cell.classList.add("cell");
+          cell.dataset.index = i;
+          cell.addEventListener("click", handleCellClick);
+          cells.push(cell);
+          board.appendChild(cell);
+        }
+
+        // Function to handle cell clicks
+        function handleCellClick(event) {
+          const clickedCell = event.target;
+          const index = clickedCell.dataset.index;
+
+          // Check if the cell is already filled or if the game is over
+          if (!cells[index].textContent && !winner) {
+            cells[index].textContent = currentPlayer;
+            checkForWinner();
+            switchPlayer();
+          }
+        }
+
+        // Function to switch players (X or O)
+        function switchPlayer() {
+          currentPlayer = currentPlayer === "X" ? "O" : "X";
+        }
+
+        // Function to check for a winner
+        function checkForWinner() {
+          const winningCombinations = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8], // Rows
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8], // Columns
+            [0, 4, 8],
+            [2, 4, 6], // Diagonals
+          ];
+
+          for (const combo of winningCombinations) {
+            const [a, b, c] = combo;
+            if (
+              cells[a].textContent &&
+              cells[a].textContent === cells[b].textContent &&
+              cells[a].textContent === cells[c].textContent
+            ) {
+              cells[a].classList.add("winner");
+              cells[b].classList.add("winner");
+              cells[c].classList.add("winner");
+              winner = currentPlayer;
+              setTimeout(() => {
+                alert(`Player ${winner} wins!`);
+              }, 10);
+              break;
+            }
+          }
+        }
+
+        // Function to reset the game
+        function resetGame() {
+          cells.forEach((cell) => {
+            cell.textContent = "";
+            cell.classList.remove("winner");
+          });
+          currentPlayer = "X";
+          winner = null;
+        }
+
+        // Attach reset button click handler
+        resetButton.addEventListener("click", resetGame);
+      });
+    </script>
+  </body>
+</html>
